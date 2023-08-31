@@ -1,8 +1,8 @@
-# Personal portfolio
+# ASTRO
 
-[![Site preview](/public/site-preview.png)](https://hristopavlov.dev)
+<!-- [![Site preview](/public/site-preview.png)](https://hristopavlov.dev)
 
-My design portfolio to showcase a few projects. Built with [Next.js](https://nextjs.org/), [Three.js](https://threejs.org/), and [Framer Motion](https://www.framer.com/motion/).
+My design portfolio to showcase a few projects. Built with [Next.js](https://nextjs.org/), [Three.js](https://threejs.org/), and [Framer Motion](https://www.framer.com/motion/). -->
 
 ## Install & run
 
