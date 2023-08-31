@@ -1,16 +1,10 @@
- _   _ ______ 
-| | | || ___ \
-| |_| || |_/ /
-|  _  ||  __/ 
-| | | || |    
-\_| |_/\_|    
-              
-              
+ASTRO
+
 The humans.txt file explains the team, technology,
 and graphic assets behind this site humanstxt.org.
 
 _______________________________________________________________________________
-
+HEAVILY BASED ON 2050.earth
 DESIGNER | デザイナー
 
 Hristo Pavlov

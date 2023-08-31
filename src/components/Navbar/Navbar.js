@@ -145,10 +145,10 @@ export const Navbar = () => {
         <a
           data-navbar-item
           className={styles.logo}
-          aria-label="Hristo Pavlov, Software Developer"
+          aria-label="Astro. Making space cool"
           onClick={handleMobileNavClick}
         >
-          <Monogram highlight />
+          {/* <Monogram highlight /> */}
         </a>
       </RouterLink>
       <NavToggle onClick={() => dispatch({ type: 'toggleMenu' })} menuOpen={menuOpen} />
@@ -167,7 +167,7 @@ export const Navbar = () => {
             </RouterLink>
           ))}
         </div>
-        <NavbarIcons desktop />
+        {/* <NavbarIcons desktop /> */}
       </nav>
       <Transition unmount in={menuOpen} timeout={msToNum(tokens.base.durationL)}>
         {visible => (
@@ -189,7 +189,7 @@ export const Navbar = () => {
                 </a>
               </RouterLink>
             ))}
-            <NavbarIcons />
+            {/* <NavbarIcons /> */}
             <ThemeToggle isMobile />
           </nav>
         )}
