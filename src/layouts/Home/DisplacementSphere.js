@@ -63,8 +63,8 @@ export const DisplacementSphere = props => {
     renderer.current.setPixelRatio(1);
     // renderer.current.outputEncoding = SRGBColorSpace;
 
-    camera.current = new PerspectiveCamera(54, innerWidth / innerHeight, 0.1, 100);
-    camera.current.position.z = 52;
+    camera.current = new PerspectiveCamera(54, innerWidth / innerHeight, 0.1, 200);
+    camera.current.position.z = 0;
 
     scene.current = new Scene();
 
@@ -83,7 +83,7 @@ export const DisplacementSphere = props => {
     startTransition(() => {
       geometry.current = new SphereGeometry(32, 128, 128);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.position.z = 0;
+      sphere.current.position.z = -100;
       sphere.current.modifier = Math.random();
       scene.current.add(sphere.current);
     });
@@ -125,14 +125,14 @@ export const DisplacementSphere = props => {
     }
 
     if (width <= media.mobile) {
-      sphere.current.position.x = 14;
+      sphere.current.position.x = 0;
       sphere.current.position.y = 10;
     } else if (width <= media.tablet) {
-      sphere.current.position.x = 18;
-      sphere.current.position.y = 14;
+      sphere.current.position.x = 0;
+      sphere.current.position.y = 11;
     } else {
-      sphere.current.position.x = 22;
-      sphere.current.position.y = 16;
+      sphere.current.position.x = 2;
+      sphere.current.position.y = 11;
     }
   }, [reduceMotion, windowSize]);
 

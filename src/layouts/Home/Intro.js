@@ -64,7 +64,7 @@ export function Intro({ id, sectionRef, disciplines, scrollIndicatorHidden, ...r
           <Fragment>
             <DisplacementSphere />
             <header className={styles.text}>
-              <h1 className={styles.name} data-visible={visible} id={titleId}>
+              <h1 className={styles.name} data-visible={visible} id={titleId} style={{marginLeft: "10px"}}>
                 <DecoderText text="is cool [again]." delay={300} />
               </h1>
               <Heading level={0} as="h2" className={styles.title}>
