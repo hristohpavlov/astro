@@ -1,0 +1,39 @@
+ _   _ ______ 
+| | | || ___ \
+| |_| || |_/ /
+|  _  ||  __/ 
+| | | || |    
+\_| |_/\_|    
+              
+              
+The humans.txt file explains the team, technology,
+and graphic assets behind this site humanstxt.org.
+
+_______________________________________________________________________________
+
+DESIGNER | デザイナー
+
+Hristo Pavlov
+
+Design tools:
+Photoshop
+Blender
+
+twitter.com/hristohpavlov
+github.com/hristohpavlov
+
+_______________________________________________________________________________
+
+TECHNOLOGY | テクノロジー
+
+React
+Next.js
+Three.js
+Framer Motion
+
+_______________________________________________________________________________
+
+FONTS | フォント
+
+Gotham
+Hiragino Kaku Gothic
