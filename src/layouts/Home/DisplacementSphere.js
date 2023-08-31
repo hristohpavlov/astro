@@ -129,7 +129,7 @@ export const DisplacementSphere = props => {
       sphere.current.position.y = 10;
     } else if (width <= media.tablet) {
       sphere.current.position.x = 0;
-      sphere.current.position.y = 11;
+      sphere.current.position.y = 10;
     } else {
       sphere.current.position.x = 2;
       sphere.current.position.y = 11;
