@@ -57,7 +57,7 @@ export const DisplacementSphere = props => {
     });
     renderer.current.setSize(innerWidth, innerHeight);
     renderer.current.setPixelRatio(1);
-    camera.current = new PerspectiveCamera(60, 2, 0.1, 10);
+    camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 10);
     camera.current.position.set(4,0,0);
     scene.current = new Scene();
     const loader = new THREE.TextureLoader();
@@ -101,10 +101,10 @@ export const DisplacementSphere = props => {
     controls.enableDamping = true;
   controls.enablePan = false;
   controls.minDistance = 2;
-  controls.maxDistance = 3;
+  controls.maxDistance = 5;
     controls.update();
     startTransition(() => {
-      geometry.current = new SphereGeometry(1.44, 64, 32);
+      geometry.current = new SphereGeometry(1.64, 64, 32);
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.modifier = Math.random();
       sphere.current.rotation.y = Math.PI * -0.122;
