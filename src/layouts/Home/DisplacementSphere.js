@@ -22,7 +22,8 @@ import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
 import styles from './DisplacementSphere.module.css';
 import fragShader from './displacementSphereFragment.glsl';
 import vertShader from './displacementSphereVertex.glsl';
-
+import * as THREE from 'three';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 const springConfig = {
   stiffness: 30,
   damping: 20,
@@ -67,24 +68,62 @@ export const DisplacementSphere = props => {
     camera.current.position.z = 0;
 
     scene.current = new Scene();
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load("/static/world.png");
+    material.current = new THREE.MeshBasicMaterial({map: texture});
+    // material.current.onBeforeCompile = shader => {
+    //   uniforms.current = UniformsUtils.merge([
+    //     shader.uniforms,
+    //     { time: { type: 'f', value: 0 } },
+    //   ]);
 
-    material.current = new MeshPhongMaterial();
-    material.current.onBeforeCompile = shader => {
-      uniforms.current = UniformsUtils.merge([
-        shader.uniforms,
-        { time: { type: 'f', value: 0 } },
-      ]);
-
-      shader.uniforms = uniforms.current;
-      shader.vertexShader = vertShader;
-      shader.fragmentShader = fragShader;
+    //   shader.uniforms = uniforms.current;
+    //   shader.vertexShader = vertShader;
+    //   shader.fragmentShader = fragShader;
+    // };
+    const atmosphereShader = {
+      uniforms: {},
+      vertexShader: [
+        "varying vec3 vNormal;",
+        "void main() {",
+        "vNormal = normalize( normalMatrix * normal );",
+        "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+        "}"
+      ].join("\n"),
+      fragmentShader: [
+        "varying vec3 vNormal;",
+        "void main() {",
+        "float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );",
+        "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;",
+        "}"
+      ].join("\n")
     };
+    const uniforms = THREE.UniformsUtils.clone(atmosphereShader.uniforms);
+
+    const atmosphereGeometry = new THREE.SphereGeometry(1.07, 40, 30);
+    const atmosphereMaterial = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: atmosphereShader.vertexShader,
+      fragmentShader: atmosphereShader.fragmentShader,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
+      transparent: true
+    });
+
+    const atmosphereMesh = new THREE.Mesh(
+      atmosphereGeometry,
+      atmosphereMaterial
+    );
+    atmosphereMesh.scale.set(1.05, 1.01, 1.07);
+
 
     startTransition(() => {
-      geometry.current = new SphereGeometry(32, 128, 128);
+      geometry.current = new SphereGeometry(1, 64, 32);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.position.z = -100;
+      sphere.current.position.z = -3.2;
       sphere.current.modifier = Math.random();
+      sphere.current.rotation.y = Math.PI * -0.5;
+      sphere.current.add(atmosphereMesh);
       scene.current.add(sphere.current);
     });
 
@@ -126,13 +165,13 @@ export const DisplacementSphere = props => {
 
     if (width <= media.mobile) {
       sphere.current.position.x = 0;
-      sphere.current.position.y = 10;
+      sphere.current.position.y = 0.3;
     } else if (width <= media.tablet) {
       sphere.current.position.x = 0;
-      sphere.current.position.y = 10;
+      sphere.current.position.y = 0.3;
     } else {
-      sphere.current.position.x = 2;
-      sphere.current.position.y = 11;
+      sphere.current.position.x = 0;
+      sphere.current.position.y = 0.3;
     }
   }, [reduceMotion, windowSize]);
 
@@ -166,7 +205,8 @@ export const DisplacementSphere = props => {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
 
-      sphere.current.rotation.z += 0.001;
+      // sphere.current.rotation.z += 0.001;
+      
       sphere.current.rotation.x = rotationX.get();
       sphere.current.rotation.y = rotationY.get();
 
