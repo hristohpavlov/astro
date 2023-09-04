@@ -104,7 +104,7 @@ export const DisplacementSphere = props => {
   controls.maxDistance = 5;
     controls.update();
     startTransition(() => {
-      geometry.current = new SphereGeometry(1.64, 64, 32);
+      geometry.current = new SphereGeometry(1.54, 64, 32);
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.modifier = Math.random();
       sphere.current.rotation.y = Math.PI * -0.122;
