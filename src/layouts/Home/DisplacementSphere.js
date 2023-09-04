@@ -100,7 +100,7 @@ export const DisplacementSphere = props => {
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
     controls.enableDamping = true;
   controls.enablePan = false;
-  controls.minDistance = 1.5;
+  controls.minDistance = 2;
   controls.maxDistance = 3;
     controls.update();
     startTransition(() => {
