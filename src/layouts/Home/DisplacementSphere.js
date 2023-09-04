@@ -8,28 +8,23 @@ import {
   Color,
   DirectionalLight,
   Mesh,
-  MeshPhongMaterial,
   PerspectiveCamera,
   Scene,
   SphereGeometry,
-  UniformsUtils,
   Vector2,
   WebGLRenderer,
-  SRGBColorSpace,
 } from 'three';
-import { media, rgbToThreeColor } from 'utils/style';
+import { rgbToThreeColor } from 'utils/style';
 import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
 import styles from './DisplacementSphere.module.css';
-import fragShader from './displacementSphereFragment.glsl';
-import vertShader from './displacementSphereVertex.glsl';
+
 import * as THREE from 'three';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 const springConfig = {
   stiffness: 30,
   damping: 20,
   mass: 2,
 };
-
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 export const DisplacementSphere = props => {
   const theme = useTheme();
   const { rgbBackground, themeId, colorWhite } = theme;
@@ -52,7 +47,7 @@ export const DisplacementSphere = props => {
 
   useEffect(() => {
     const { innerWidth, innerHeight } = window;
-    mouse.current = new Vector2(0.8, 0.5);
+    mouse.current = new Vector2(0, 0);
     renderer.current = new WebGLRenderer({
       canvas: canvasRef.current,
       antialias: false,
@@ -62,25 +57,12 @@ export const DisplacementSphere = props => {
     });
     renderer.current.setSize(innerWidth, innerHeight);
     renderer.current.setPixelRatio(1);
-    // renderer.current.outputEncoding = SRGBColorSpace;
-
-    camera.current = new PerspectiveCamera(54, innerWidth / innerHeight, 0.1, 200);
-    camera.current.position.z = 0;
-
+    camera.current = new PerspectiveCamera(60, 2, 0.1, 10);
+    camera.current.position.set(4,0,0);
     scene.current = new Scene();
     const loader = new THREE.TextureLoader();
     const texture = loader.load("/static/world.png");
     material.current = new THREE.MeshBasicMaterial({map: texture});
-    // material.current.onBeforeCompile = shader => {
-    //   uniforms.current = UniformsUtils.merge([
-    //     shader.uniforms,
-    //     { time: { type: 'f', value: 0 } },
-    //   ]);
-
-    //   shader.uniforms = uniforms.current;
-    //   shader.vertexShader = vertShader;
-    //   shader.fragmentShader = fragShader;
-    // };
     const atmosphereShader = {
       uniforms: {},
       vertexShader: [
@@ -98,9 +80,10 @@ export const DisplacementSphere = props => {
         "}"
       ].join("\n")
     };
-    const uniforms = THREE.UniformsUtils.clone(atmosphereShader.uniforms);
+    
 
-    const atmosphereGeometry = new THREE.SphereGeometry(1.07, 40, 30);
+    const uniforms = THREE.UniformsUtils.clone(atmosphereShader.uniforms);
+    const atmosphereGeometry = new THREE.SphereGeometry(1, 64, 32);
     const atmosphereMaterial = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: atmosphereShader.vertexShader,
@@ -109,20 +92,22 @@ export const DisplacementSphere = props => {
       blending: THREE.AdditiveBlending,
       transparent: true
     });
-
     const atmosphereMesh = new THREE.Mesh(
       atmosphereGeometry,
       atmosphereMaterial
     );
-    atmosphereMesh.scale.set(1.05, 1.01, 1.07);
-
-
+    atmosphereMesh.scale.set(1.8, 1.8, 1.8);
+    const controls = new OrbitControls(camera.current, renderer.current.domElement);
+    controls.enableDamping = true;
+  controls.enablePan = false;
+  controls.minDistance = 1.5;
+  controls.maxDistance = 3;
+    controls.update();
     startTransition(() => {
-      geometry.current = new SphereGeometry(1, 64, 32);
+      geometry.current = new SphereGeometry(1.44, 64, 32);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.position.z = -3.2;
       sphere.current.modifier = Math.random();
-      sphere.current.rotation.y = Math.PI * -0.5;
+      sphere.current.rotation.y = Math.PI * -0.122;
       sphere.current.add(atmosphereMesh);
       scene.current.add(sphere.current);
     });
@@ -132,6 +117,7 @@ export const DisplacementSphere = props => {
       cleanRenderer(renderer.current);
     };
   }, []);
+
 
   useEffect(() => {
     const dirLight = new DirectionalLight(colorWhite, 0.6);
@@ -151,51 +137,6 @@ export const DisplacementSphere = props => {
   }, [rgbBackground, colorWhite, themeId]);
 
   useEffect(() => {
-    const { width, height } = windowSize;
-
-    const adjustedHeight = height + height * 0.3;
-    renderer.current.setSize(width, adjustedHeight);
-    camera.current.aspect = width / adjustedHeight;
-    camera.current.updateProjectionMatrix();
-
-    // Render a single frame on resize when not animating
-    if (reduceMotion) {
-      renderer.current.render(scene.current, camera.current);
-    }
-
-    if (width <= media.mobile) {
-      sphere.current.position.x = 0;
-      sphere.current.position.y = 0.3;
-    } else if (width <= media.tablet) {
-      sphere.current.position.x = 0;
-      sphere.current.position.y = 0.3;
-    } else {
-      sphere.current.position.x = 0;
-      sphere.current.position.y = 0.3;
-    }
-  }, [reduceMotion, windowSize]);
-
-  useEffect(() => {
-    const onMouseMove = event => {
-      const position = {
-        x: event.clientX / window.innerWidth,
-        y: event.clientY / window.innerHeight,
-      };
-
-      rotationX.set(position.y / 2);
-      rotationY.set(position.x / 2);
-    };
-
-    if (!reduceMotion && isInViewport) {
-      window.addEventListener('mousemove', onMouseMove);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-    };
-  }, [isInViewport, reduceMotion, rotationX, rotationY]);
-
-  useEffect(() => {
     let animation;
 
     const animate = () => {
@@ -205,11 +146,10 @@ export const DisplacementSphere = props => {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
 
-      // sphere.current.rotation.z += 0.001;
+      sphere.current.rotation.y += 0.001;
       
-      sphere.current.rotation.x = rotationX.get();
-      sphere.current.rotation.y = rotationY.get();
-
+      sphere.current.rotation.z = rotationX.get();
+      sphere.current.rotation.x = rotationY.get();
       renderer.current.render(scene.current, camera.current);
     };
 

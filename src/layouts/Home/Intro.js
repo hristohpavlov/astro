@@ -64,9 +64,9 @@ export function Intro({ id, sectionRef, disciplines, scrollIndicatorHidden, ...r
           <Fragment>
             <DisplacementSphere />
             <header className={styles.text}>
-              <h1 className={styles.name} data-visible={visible} id={titleId} style={{marginLeft: "10px"}}>
+              {/* <h1 className={styles.name} data-visible={visible} id={titleId} style={{marginLeft: "10px"}}>
                 <DecoderText text="is cool [again]." delay={300} />
-              </h1>
+              </h1> */}
               <Heading level={0} as="h2" className={styles.title}>
                 {/* <VisuallyHidden className={styles.label}>
                   {`Making space ${introLabel}`}
@@ -81,7 +81,7 @@ export function Intro({ id, sectionRef, disciplines, scrollIndicatorHidden, ...r
                   </span>
                   <span className={styles.line} data-status={status} />
                 </span> */}
-                <div className={styles.row} component="span">
+                {/* <div className={styles.row} component="span">
                   <AnimatePresence>
                     {disciplines.map(item => (
                       <Transition
@@ -104,7 +104,7 @@ export function Intro({ id, sectionRef, disciplines, scrollIndicatorHidden, ...r
                       </Transition>
                     ))}
                   </AnimatePresence>
-                </div>
+                </div> */}
               </Heading>
             </header>
             <RouterLink href="/#project-1">
