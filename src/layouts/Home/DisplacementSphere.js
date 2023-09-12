@@ -104,7 +104,7 @@ export const DisplacementSphere = props => {
     controls.maxDistance = 5;
     controls.update();
 
-    var geom = new THREE.SphereGeometry(1.95, 120, 60);
+    var geom = new THREE.SphereGeometry(1.95, 640, 320);
     var colors = [];
     var color = new THREE.Color();
     var q = 0xffffff * 0.25;
@@ -132,7 +132,7 @@ export const DisplacementSphere = props => {
           value: disk
         },
         size: {
-          value: 0.00525
+          value: 0.00125
         },
         scale: {
           value: window.innerHeight * 5
