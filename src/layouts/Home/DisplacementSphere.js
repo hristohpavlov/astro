@@ -50,19 +50,19 @@ export const DisplacementSphere = props => {
     mouse.current = new Vector2(0, 0);
     renderer.current = new WebGLRenderer({
       canvas: canvasRef.current,
-      antialias: false,
+      antialias: true,
       alpha: true,
       powerPreference: 'high-performance',
       failIfMajorPerformanceCaveat: true,
     });
     renderer.current.setSize(innerWidth, innerHeight);
     renderer.current.setPixelRatio(1);
-    camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 10);
+    camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 10);
     camera.current.position.set(4,0,0);
     scene.current = new Scene();
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("/static/world.png");
-    material.current = new THREE.MeshBasicMaterial({map: texture});
+    const texture = loader.load("/static/earth.jpg");
+    // material.current = new THREE.MeshBasicMaterial({map: texture});
     const atmosphereShader = {
       uniforms: {},
       vertexShader: [
@@ -99,16 +99,95 @@ export const DisplacementSphere = props => {
     atmosphereMesh.scale.set(1.8, 1.8, 1.8);
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
     controls.enableDamping = true;
-  controls.enablePan = false;
-  controls.minDistance = 2;
-  controls.maxDistance = 5;
+    controls.enablePan = false;
+    controls.minDistance = 3;
+    controls.maxDistance = 5;
     controls.update();
+
+    var geom = new THREE.SphereGeometry(1.95, 120, 60);
+    var colors = [];
+    var color = new THREE.Color();
+    var q = 0xffffff * 0.25;
+    for (let i = 0; i < geom.attributes.position.count; i++) {
+      color.set(q + q * 3);
+      color.toArray(colors, i * 3);
+    }
+    geom.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
+    
+    loader.setCrossOrigin('');
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(1, 1);
+    var disk = loader.load('/static/circle.png');
+    var points = new THREE.Points(geom, new THREE.ShaderMaterial({
+      vertexColors: true,
+      uniforms: {
+        visibility: {
+          value: texture
+        },
+        shift: {
+          value: 0
+        },
+        shape: {
+          value: disk
+        },
+        size: {
+          value: 0.00525
+        },
+        scale: {
+          value: window.innerHeight * 5
+        }
+      },
+      vertexShader: `
+                    
+          uniform float scale;
+          uniform float size;
+          
+          varying vec2 vUv;
+          varying vec3 vColor;
+          
+          void main() {
+          
+            vUv = uv;
+            vColor = color;
+            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+            gl_PointSize = size * ( scale / length( mvPosition.xyz ) );
+            gl_Position = projectionMatrix * mvPosition;
+    
+          }
+      `,
+      fragmentShader: `
+          uniform sampler2D visibility;
+          uniform float shift;
+          uniform sampler2D shape;
+          
+          varying vec2 vUv;
+          varying vec3 vColor;
+          
+    
+          void main() {
+            
+            vec2 uv = vUv;
+            uv.x += shift;
+            vec4 v = texture2D(visibility, uv);
+            if (length(v.rgb) > 1.0) discard;
+    
+            gl_FragColor = vec4( vColor, 1.0 );
+            vec4 shapeData = texture2D( shape, gl_PointCoord );
+            if (shapeData.a < 0.5) discard;
+            gl_FragColor = gl_FragColor * shapeData;
+            
+          }
+      `,
+      transparent: true
+    }));
     startTransition(() => {
-      geometry.current = new SphereGeometry(1.54, 64, 32);
+      geometry.current = new SphereGeometry(0, 64, 32);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.modifier = Math.random();
-      sphere.current.rotation.y = Math.PI * -0.122;
-      sphere.current.add(atmosphereMesh);
+      // sphere.current.modifier = Math.random();
+      sphere.current.rotation.y = Math.PI * -0.155;
+      // sphere.current.add(atmosphereMesh);
+      sphere.current.add(points);
       scene.current.add(sphere.current);
     });
 
@@ -117,7 +196,6 @@ export const DisplacementSphere = props => {
       cleanRenderer(renderer.current);
     };
   }, []);
-
 
   useEffect(() => {
     const dirLight = new DirectionalLight(colorWhite, 0.6);
