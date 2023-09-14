@@ -13,6 +13,9 @@ import {
   SphereGeometry,
   Vector2,
   WebGLRenderer,
+  DoubleSide,
+  TextureLoader,
+  ShaderMaterial,
 } from 'three';
 import { rgbToThreeColor } from 'utils/style';
 import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
@@ -60,43 +63,7 @@ export const DisplacementSphere = props => {
     camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 10);
     camera.current.position.set(4,0,0);
     scene.current = new Scene();
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load("/static/earth.jpg");
-    // material.current = new THREE.MeshBasicMaterial({map: texture});
-    const atmosphereShader = {
-      uniforms: {},
-      vertexShader: [
-        "varying vec3 vNormal;",
-        "void main() {",
-        "vNormal = normalize( normalMatrix * normal );",
-        "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-        "}"
-      ].join("\n"),
-      fragmentShader: [
-        "varying vec3 vNormal;",
-        "void main() {",
-        "float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );",
-        "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;",
-        "}"
-      ].join("\n")
-    };
     
-
-    const uniforms = THREE.UniformsUtils.clone(atmosphereShader.uniforms);
-    const atmosphereGeometry = new THREE.SphereGeometry(1, 64, 32);
-    const atmosphereMaterial = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: atmosphereShader.vertexShader,
-      fragmentShader: atmosphereShader.fragmentShader,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true
-    });
-    const atmosphereMesh = new THREE.Mesh(
-      atmosphereGeometry,
-      atmosphereMaterial
-    );
-    atmosphereMesh.scale.set(1.8, 1.8, 1.8);
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
     controls.enableDamping = true;
     controls.enablePan = false;
@@ -104,22 +71,23 @@ export const DisplacementSphere = props => {
     controls.maxDistance = 5;
     controls.update();
 
-    var geom = new THREE.SphereGeometry(1.95, 640, 320);
+    var geom = new THREE.SphereGeometry(1.95, 500, 500);
     var colors = [];
     var color = new THREE.Color();
-    var q = 0xffffff * 0.25;
+    var q = 0x189ad3;
     for (let i = 0; i < geom.attributes.position.count; i++) {
-      color.set(q + q * 3);
+      color.set(q);
       color.toArray(colors, i * 3);
     }
     geom.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
     
-    loader.setCrossOrigin('');
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load("/static/earth_1.png");
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(1, 1);
     var disk = loader.load('/static/circle.png');
-    var points = new THREE.Points(geom, new THREE.ShaderMaterial({
+    var landmassInPoints = new THREE.Points(geom, new THREE.ShaderMaterial({
       vertexColors: true,
       uniforms: {
         visibility: {
@@ -138,8 +106,7 @@ export const DisplacementSphere = props => {
           value: window.innerHeight * 5
         }
       },
-      vertexShader: `
-                    
+      vertexShader: `          
           uniform float scale;
           uniform float size;
           
@@ -181,13 +148,59 @@ export const DisplacementSphere = props => {
       `,
       transparent: true
     }));
+    const lineTexture = new TextureLoader().load("/static/merge_from_ofoct.jpg");
+    const fillTexture = new TextureLoader().load("/static/earth_1.png");
+    const mapTexture = new TextureLoader().load("/static/circle.png");
+    const suniforms = {
+      lineTexture: { value: lineTexture },
+      fillTexture: { value: fillTexture },
+      mapTexture: { value: mapTexture },
+    };
+    material.current = new ShaderMaterial({
+      uniforms: suniforms,
+      side: DoubleSide,
+      vertexShader: `
+          precision highp float;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+          varying float _alpha;
+          void main() {
+            vUv = uv;
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+            gl_Position = projectionMatrix * mvPosition;
+          }
+          `,
+      fragmentShader: `
+          uniform sampler2D lineTexture;
+          uniform sampler2D fillTexture;
+          uniform sampler2D mapTexture;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+          varying float _alpha;
+          void main() {
+            vec4 lineColor = texture2D( lineTexture, vUv );
+            vec4 fillColor = texture2D( fillTexture, vUv );
+            float silhouette = dot(vec3(0.0, 0.0, 1.0) ,vNormal );
+            lineColor = vec4(lineColor.r,lineColor.g,lineColor.b,lineColor.a);
+            float z = gl_FragCoord.z;
+            if(lineColor.r <= 0.1) {
+              discard;
+            }
+            gl_FragColor = vec4(lineColor.rgb * vec3(24.0 / 255.0,154.0 / 255.0,211.0 / 255.0), 1.0);
+          }
+          
+      `,
+      transparent: true,
+    });
+    
     startTransition(() => {
-      geometry.current = new SphereGeometry(0, 64, 32);
+      geometry.current = new SphereGeometry(1.95, 1000, 1000);
       sphere.current = new Mesh(geometry.current, material.current);
-      // sphere.current.modifier = Math.random();
       sphere.current.rotation.y = Math.PI * -0.155;
-      // sphere.current.add(atmosphereMesh);
-      sphere.current.add(points);
+      sphere.current.add(landmassInPoints);
+      console.log(sphere.current);
+
       scene.current.add(sphere.current);
     });
 
@@ -224,7 +237,7 @@ export const DisplacementSphere = props => {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
 
-      sphere.current.rotation.y += 0.001;
+      sphere.current.rotation.y -= 0.001;
       
       sphere.current.rotation.z = rotationX.get();
       sphere.current.rotation.x = rotationY.get();
