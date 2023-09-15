@@ -16,6 +16,8 @@ import {
   DoubleSide,
   TextureLoader,
   ShaderMaterial,
+  TorusBufferGeometry,
+  Group
 } from 'three';
 import { rgbToThreeColor } from 'utils/style';
 import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
@@ -61,14 +63,14 @@ export const DisplacementSphere = props => {
     renderer.current.setSize(innerWidth, innerHeight);
     renderer.current.setPixelRatio(1);
     camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 10);
-    camera.current.position.set(4,0,0);
+    camera.current.position.set(5,0,0);
     scene.current = new Scene();
     
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.minDistance = 3;
-    controls.maxDistance = 7;
+    controls.maxDistance = 5;
     controls.update();
 
     var geom = new THREE.SphereGeometry(1.95, 500, 500);
@@ -83,6 +85,8 @@ export const DisplacementSphere = props => {
     
     const loader = new THREE.TextureLoader();
     const texture = loader.load("/static/earth_1.png");
+    const texture1 = loader.load("/static/bg3.jpg");
+    const background = new THREE.MeshBasicMaterial({map: texture1,side: THREE.BackSide,});
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(1, 1);
@@ -151,10 +155,14 @@ export const DisplacementSphere = props => {
     const lineTexture = new TextureLoader().load("/static/merge_from_ofoct.jpg");
     const fillTexture = new TextureLoader().load("/static/earth_1.png");
     const mapTexture = new TextureLoader().load("/static/circle.png");
+    const cloudTexture = new TextureLoader().load("/static/clouds.jpg");
     const suniforms = {
       lineTexture: { value: lineTexture },
       fillTexture: { value: fillTexture },
       mapTexture: { value: mapTexture },
+    };
+    const cloudUniforms = {
+      cloudTexture: { value: cloudTexture },
     };
     material.current = new ShaderMaterial({
       uniforms: suniforms,
@@ -193,14 +201,60 @@ export const DisplacementSphere = props => {
       `,
       transparent: true,
     });
+    const cloudShaderMaterial = new ShaderMaterial({
+      uniforms: cloudUniforms,
+      vertexShader: `
+          precision highp float;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+    
+          void main() {
+            vUv = uv;
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+    
+            gl_Position = projectionMatrix * mvPosition;
+          }
+          `,
+      fragmentShader: `
+          uniform sampler2D cloudTexture;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+    
+          void main() {
+            vec4 cloudColor = texture2D( cloudTexture, vUv );
+            float silhouette = dot(vec3(0.0, 0.0, 1.0) ,vNormal );
+            cloudColor = vec4(cloudColor.rgb,1.0);
+            float c = 0.0;
+            if(cloudColor.r <= 0.1) {
+              discard;
+            } else {
+              cloudColor = vec4(c,c,c, 1.0);
+                if(silhouette > 0.5 && silhouette < 0.8) {
+                  c =1.0 -  pow((silhouette - 0.5) * 3.3, 2.1);
+                } else {
+                  c = 0.0;
+                  discard;
+                }
+           }
+            gl_FragColor = vec4(vec3(1.0,1.0,1.0) * c, c * 0.1);
+          }
+      `,
+      transparent: true,
+    });
     
     startTransition(() => {
       geometry.current = new SphereGeometry(1.95, 1000, 1000);
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.rotation.y = Math.PI * -0.155;
       sphere.current.add(landmassInPoints);
-      console.log(sphere.current);
-
+      const backgroundGeom = new SphereGeometry(4.95, 100, 100);
+      const backgorund = new Mesh(backgroundGeom, background);
+      const cloudGeom = new SphereGeometry(2.35,100,100);
+      const clouds = new Mesh(cloudGeom, cloudShaderMaterial);
+      clouds.rotation.y = Math.PI * -0.155;
+      sphere.current.add(clouds);
+      sphere.current.add(backgorund);
       scene.current.add(sphere.current);
     });
 

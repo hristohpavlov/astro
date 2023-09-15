@@ -147,7 +147,7 @@ export const Home = () => {
         visible={visibleSections.includes(details.current)}
         id="details"
       /> */}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
