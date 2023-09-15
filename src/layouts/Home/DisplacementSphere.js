@@ -16,8 +16,6 @@ import {
   DoubleSide,
   TextureLoader,
   ShaderMaterial,
-  TorusBufferGeometry,
-  Group
 } from 'three';
 import { rgbToThreeColor } from 'utils/style';
 import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
@@ -85,7 +83,7 @@ export const DisplacementSphere = props => {
     
     const loader = new THREE.TextureLoader();
     const texture = loader.load("/static/earth_1.png");
-    const texture1 = loader.load("/static/bg3.jpg");
+    const texture1 = loader.load("/static/bg3.webp");
     const background = new THREE.MeshBasicMaterial({map: texture1,side: THREE.BackSide,});
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
