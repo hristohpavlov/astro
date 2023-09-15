@@ -82,9 +82,12 @@ export const DisplacementSphere = props => {
     geom.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
     
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("/static/earth_1.png");
-    const loader1 = new THREE.TextureLoader();
-    const texture1 = loader1.load("/static/bg3.webp");
+    const texture = new TextureLoader().load("/static/earth_1.png");
+    const texture1 = new TextureLoader().load("/static/bg3.webp");
+    
+    texture1.wrapS = THREE.RepeatWrapping;
+    texture1.wrapT = THREE.RepeatWrapping;
+    texture1.repeat.set(1, 1);
     const background = new THREE.MeshBasicMaterial({map: texture1,side: THREE.BackSide,});
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
@@ -247,13 +250,13 @@ export const DisplacementSphere = props => {
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.rotation.y = Math.PI * -0.155;
       sphere.current.add(landmassInPoints);
-      const backgroundGeom = new SphereGeometry(4.95, 100, 100);
-      const backgorund = new Mesh(backgroundGeom, background);
+      const backgroundGeom = new SphereGeometry(4.95, 1000, 1000);
+      const backgroundSp = new Mesh(backgroundGeom, background);
       const cloudGeom = new SphereGeometry(2.35,100,100);
       const clouds = new Mesh(cloudGeom, cloudShaderMaterial);
       clouds.rotation.y = Math.PI * -0.155;
       // sphere.current.add(clouds);
-      // sphere.current.add(backgorund);
+      sphere.current.add(backgroundSp);
       scene.current.add(sphere.current);
     });
 
