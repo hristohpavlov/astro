@@ -83,7 +83,8 @@ export const DisplacementSphere = props => {
     
     const loader = new THREE.TextureLoader();
     const texture = loader.load("/static/earth_1.png");
-    const texture1 = loader.load("/static/bg3.webp");
+    const loader1 = new THREE.TextureLoader();
+    const texture1 = loader1.load("/static/bg3.webp");
     const background = new THREE.MeshBasicMaterial({map: texture1,side: THREE.BackSide,});
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
