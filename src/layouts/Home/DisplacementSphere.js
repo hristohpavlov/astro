@@ -88,7 +88,7 @@ export const DisplacementSphere = props => {
     texture1.wrapS = THREE.RepeatWrapping;
     texture1.wrapT = THREE.RepeatWrapping;
     texture1.repeat.set(1, 1);
-    const background = new THREE.MeshBasicMaterial({map: texture1,side: THREE.BackSide,});
+    const background = new THREE.MeshBasicMaterial({map: texture1});
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(1, 1);
@@ -250,7 +250,7 @@ export const DisplacementSphere = props => {
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.rotation.y = Math.PI * -0.155;
       sphere.current.add(landmassInPoints);
-      const backgroundGeom = new SphereGeometry(4.95, 1000, 1000);
+      const backgroundGeom = new SphereGeometry(5, 100, 100);
       const backgroundSp = new Mesh(backgroundGeom, background);
       const cloudGeom = new SphereGeometry(2.35,100,100);
       const clouds = new Mesh(cloudGeom, cloudShaderMaterial);
