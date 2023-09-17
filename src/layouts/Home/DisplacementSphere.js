@@ -311,6 +311,22 @@ export const DisplacementSphere = props => {
     };
   }, [isInViewport, reduceMotion, rotationX, rotationY]);
 
+
+  useEffect(() => {
+    const { width, height } = windowSize;
+
+    renderer.current.setSize(width, height);
+    camera.current.aspect = width / height;
+    camera.current.updateProjectionMatrix();
+
+    // Render a single frame on resize when not animating
+    if (reduceMotion) {
+      renderer.current.render(scene.current, camera.current);
+    }
+    
+  }, [reduceMotion, windowSize]);
+
+
   return (
     <Transition in timeout={3000}>
       {visible => (
