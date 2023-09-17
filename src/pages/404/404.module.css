@@ -5,9 +5,9 @@
   padding-left: 140px;
 
   @media (--mediaTablet) {
-    padding-top: 80px;
+    padding-top: 130px;
     padding-bottom: 80px;
-    padding-left: 80px;
+    padding-left: 0px;
     grid-template-columns: 100%;
     min-height: 100vh;
     height: auto;
@@ -23,7 +23,11 @@
   height: 100%;
   overflow: hidden;
   position: relative;
-  border: var(--space2XL) solid transparent;
+  border-top: var(--space4XL) solid transparent;
+  border-left: var(--space2XL) solid transparent;
+  border-right: var(--space2XL) solid transparent;
+  border-bottom: var(--space2XL) solid transparent;
+  /* border: var(--space2XL) solid transparent; */
 
   &::after {
     content: '';
@@ -38,7 +42,7 @@
   }
 
   @media (--mediaLaptop) {
-    border-width: var(--spaceL);
+    /* border-width: var(--spaceL); */
   }
 
   @media (--mediaTablet) {
