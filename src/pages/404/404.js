@@ -74,7 +74,7 @@ export function Page404() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Animation from Bleach (2004)
+                Animation from Cowboy Bebop (1998)
               </a>
             </div>
           </Fragment>
