@@ -186,6 +186,7 @@ export const DisplacementSphere = props => {
     controls.enablePan = false;
     controls.minDistance = 3;
     controls.maxDistance = 6;
+    controls.rotateSpeed = 0.5;
     controls.update();
 
     var geom = new THREE.SphereGeometry(1.95, 500, 500);
@@ -418,11 +419,11 @@ export const DisplacementSphere = props => {
       if (uniforms.current !== undefined) {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
-      points.current.rotation.y += 0.0016;
-      torus.current.rotation.y -= 0.0019;
-      torus2.current.rotation.y += 0.0018;
-      torus3.current.rotation.y += 0.0024;
-      sphere.current.rotation.y -= 0.001;
+      points.current.rotation.y += 0.00036;
+      torus.current.rotation.y -= 0.00039;
+      torus2.current.rotation.x += 0.00058;
+      torus3.current.rotation.y += 0.00064;
+      sphere.current.rotation.y -= 0.00066;
       sphere.current.rotation.z = rotationX.get();
       sphere.current.rotation.x = rotationY.get();
       renderer.current.render(scene.current, camera.current);
