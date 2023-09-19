@@ -186,7 +186,7 @@ export const DisplacementSphere = props => {
     controls.enablePan = false;
     controls.minDistance = 3;
     controls.maxDistance = 6;
-    controls.rotateSpeed = 0.5;
+    controls.rotateSpeed = 0.7;
     controls.update();
 
     var geom = new THREE.SphereGeometry(1.95, 500, 500);
