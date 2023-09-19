@@ -23,7 +23,7 @@ import {
   Points,
   MathUtils,
   Group,
-  TorusBufferGeometry,
+  TorusGeometry,
 } from 'three';
 import { rgbToThreeColor } from 'utils/style';
 import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
@@ -56,6 +56,13 @@ export const DisplacementSphere = props => {
   const windowSize = useWindowSize();
   const rotationX = useSpring(0, springConfig);
   const rotationY = useSpring(0, springConfig);
+  const lines = useRef();
+  const backgroundSp = useRef();
+  const clouds = useRef();
+  const points = useRef();
+  const torus = useRef();
+  const torus2 = useRef();
+  const torus3 = useRef();
   const SatelliteLineShaderMaterial = new ShaderMaterial({
     side: DoubleSide,
     vertexShader: `
@@ -80,19 +87,23 @@ export const DisplacementSphere = props => {
     transparent: true,
   });
   const initSatelliteLine = () => {
-    const geometry = new TorusBufferGeometry(2.5, 0.002, 128, 128);
-    const torus = new Mesh(geometry, SatelliteLineShaderMaterial);
+    const geometry = new TorusGeometry(2.5, 0.002, 128, 128);
+    torus.current = new Mesh(geometry, SatelliteLineShaderMaterial);
   
     const scale2 = 1.001;
-    const torus2 = torus.clone();
-    torus2.rotateX((Math.PI * 8) / 3);
-    torus2.scale.set(scale2, scale2, scale2);
+    torus2.current = torus.current.clone();
+    torus2.current.rotateX((Math.PI * 8) / 3);
+    torus2.current.scale.set(scale2, scale2, scale2);
 
+    const scale3 = 1.001;
+    torus3.current = torus.current.clone();
+    torus3.current.rotateX((Math.PI * 2) / 9);
+    torus3.current.scale.set(scale3, scale3, scale3);
   
     const g = new Group();
-    g.add(torus);
-    g.add(torus2);
-  
+    g.add(torus.current);
+    g.add(torus2.current);
+    g.add(torus3.current);
     const tween= new TWEEN.Tween({ x: 1 })
       .to(
         {
@@ -102,8 +113,9 @@ export const DisplacementSphere = props => {
       )
       .easing(TWEEN.Easing.Linear.None)
       .onUpdate(() => {
-        torus.rotation.y += 0.0006;
-        torus2.rotation.y += 0.0002;
+        torus.current.rotation.y += 6;
+        torus2.current.rotation.y += 2;
+        torus3.current.rotation.y += 4;
       })
       .repeat(Infinity);
     tween.start();
@@ -136,7 +148,7 @@ export const DisplacementSphere = props => {
       transparent: true,
     });
   
-    const points = new Points(geometry, material);
+    points.current = new Points(geometry, material);
   
     const tween = new TWEEN.Tween({ x: 1 })
       .to(
@@ -147,11 +159,11 @@ export const DisplacementSphere = props => {
       )
       .easing(TWEEN.Easing.Linear.None)
       .onUpdate(() => {
-        points.rotation.z += 0.5;
+        points.rotation.z += 50;
       })
       .repeat(Infinity);
     tween.start();
-    sphere.current.add(points);
+    sphere.current.add(points.current);
   };
   useEffect(() => {
     const { innerWidth, innerHeight } = window;
@@ -355,22 +367,23 @@ export const DisplacementSphere = props => {
       const g = new Group();
       geometry.current = new SphereGeometry(1.95, 1000, 1000);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.rotation.y = Math.PI * -0.155;
+      sphere.current.rotation.y = Math.PI * -0.045;
       sphere.current.add(landmassInPoints);
       initPointsSys();
-      const lines = initSatelliteLine();
+      lines.current = initSatelliteLine();
       
-      g.add(lines);
+      g.add(lines.current);
       
       const backgroundGeom = new SphereGeometry(5, 100, 100);
-      const backgroundSp = new Mesh(backgroundGeom, background);
-      g.add(backgroundSp);
+      backgroundSp.current = new Mesh(backgroundGeom, background);
+      g.add(backgroundSp.current);
       const cloudGeom = new SphereGeometry(2.35,100,100);
-      const clouds = new Mesh(cloudGeom, cloudShaderMaterial);
-      clouds.rotation.y = Math.PI * -0.155;
-      g.add(clouds);
+      clouds.current = new Mesh(cloudGeom, cloudShaderMaterial);
+      clouds.current.rotation.y = Math.PI * -0.195;
+      g.add(clouds.current);
       sphere.current.add(g);
       scene.current.add(sphere.current);
+      
     });
 
     return () => {
@@ -405,9 +418,11 @@ export const DisplacementSphere = props => {
       if (uniforms.current !== undefined) {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
-
+      points.current.rotation.y += 0.0016;
+      torus.current.rotation.y -= 0.0019;
+      torus2.current.rotation.y += 0.0018;
+      torus3.current.rotation.y += 0.0024;
       sphere.current.rotation.y -= 0.001;
-      
       sphere.current.rotation.z = rotationX.get();
       sphere.current.rotation.x = rotationY.get();
       renderer.current.render(scene.current, camera.current);
