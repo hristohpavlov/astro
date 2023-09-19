@@ -185,7 +185,7 @@ export const DisplacementSphere = props => {
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.minDistance = 3;
-    controls.maxDistance = 6;
+    controls.maxDistance = 7;
     controls.rotateSpeed = 0.7;
     controls.update();
 
@@ -375,7 +375,7 @@ export const DisplacementSphere = props => {
       
       g.add(lines.current);
       
-      const backgroundGeom = new SphereGeometry(5, 100, 100);
+      const backgroundGeom = new SphereGeometry(5.5, 100, 100);
       backgroundSp.current = new Mesh(backgroundGeom, background);
       g.add(backgroundSp.current);
       const cloudGeom = new SphereGeometry(2.35,100,100);
