@@ -63,6 +63,7 @@ export const DisplacementSphere = props => {
   const torus = useRef();
   const torus2 = useRef();
   const torus3 = useRef();
+  const earthSil = useRef();
   const SatelliteLineShaderMaterial = new ShaderMaterial({
     side: DoubleSide,
     vertexShader: `
@@ -284,6 +285,9 @@ export const DisplacementSphere = props => {
     const cloudUniforms = {
       cloudTexture: { value: cloudTexture },
     };
+    const earthUniforms = {
+      cloudTexture: { value: fillTexture },
+    };
     material.current = new ShaderMaterial({
       uniforms: suniforms,
       side: DoubleSide,
@@ -362,7 +366,47 @@ export const DisplacementSphere = props => {
       `,
       transparent: true,
     });
+    const earthShaderMaterial = new ShaderMaterial({
+      uniforms: earthUniforms,
+      vertexShader: `
+          precision highp float;
+          varying vec2 vUv;
+          varying vec3 vNormal;
     
+          void main() {
+            vUv = uv;
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+    
+            gl_Position = projectionMatrix * mvPosition;
+          }
+          `,
+      fragmentShader: `
+          uniform sampler2D cloudTexture;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+    
+          void main() {
+            vec4 cloudColor = texture2D( cloudTexture, vUv );
+            float silhouette = dot(vec3(0.0, 0.0, 1.0) ,vNormal );
+            cloudColor = vec4(cloudColor.rgb,1.0);
+            float c = 0.0;
+            if(cloudColor.r <= 0.1) {
+              discard;
+            } else {
+              cloudColor = vec4(c,c,c, 1.0);
+                if(silhouette > 0.5 && silhouette < 0.8) {
+                  c =1.0 -  pow((silhouette - 0.5) * 3.3, 2.1);
+                } else {
+                  c = 0.0;
+                  discard;
+                }
+           }
+            gl_FragColor = vec4(vec3(24.0 / 255.0,154.0 / 255.0,211.0 / 255.0) * c, c * 0.1);
+          }
+      `,
+      transparent: true,
+    });
      
     startTransition(() => {
       const g = new Group();
@@ -378,10 +422,13 @@ export const DisplacementSphere = props => {
       const backgroundGeom = new SphereGeometry(5.5, 100, 100);
       backgroundSp.current = new Mesh(backgroundGeom, background);
       g.add(backgroundSp.current);
-      const cloudGeom = new SphereGeometry(2.35,100,100);
+      const cloudGeom = new SphereGeometry(2.30,100,100);
       clouds.current = new Mesh(cloudGeom, cloudShaderMaterial);
       clouds.current.rotation.y = Math.PI * -0.195;
       g.add(clouds.current);
+      const earthGeom = new SphereGeometry(1.95,100,100);
+      earthSil.current = new Mesh(earthGeom, earthShaderMaterial);
+      g.add(earthSil.current);
       sphere.current.add(g);
       scene.current.add(sphere.current);
       
