@@ -177,15 +177,15 @@ export const DisplacementSphere = props => {
     });
     renderer.current.setSize(innerWidth, innerHeight);
     renderer.current.setPixelRatio(1);
-    camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 10);
-    camera.current.position.set(5,0,0);
+    camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
+    camera.current.position.set(4,0,3);
     scene.current = new Scene();
     
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.minDistance = 3;
-    controls.maxDistance = 5;
+    controls.maxDistance = 6;
     controls.update();
 
     var geom = new THREE.SphereGeometry(1.95, 500, 500);
@@ -367,7 +367,7 @@ export const DisplacementSphere = props => {
       const g = new Group();
       geometry.current = new SphereGeometry(1.95, 1000, 1000);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.rotation.y = Math.PI * -0.045;
+      sphere.current.rotation.y = Math.PI * -0.195;
       sphere.current.add(landmassInPoints);
       initPointsSys();
       lines.current = initSatelliteLine();
