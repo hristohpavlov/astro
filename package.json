@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
+    "@tweenjs/tween.js": "^21.0.0",
     "@vercel/analytics": "^1.0.2",
     "cors": "^2.8.5",
     "dompurify": "^3.0.5",

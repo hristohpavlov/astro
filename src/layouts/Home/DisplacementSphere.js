@@ -16,10 +16,19 @@ import {
   DoubleSide,
   TextureLoader,
   ShaderMaterial,
+  Float32BufferAttribute,
+  Vector3,
+  BufferGeometry,
+  PointsMaterial,
+  Points,
+  MathUtils,
+  Group,
+  TorusBufferGeometry,
 } from 'three';
 import { rgbToThreeColor } from 'utils/style';
 import { cleanRenderer, cleanScene, removeLights } from 'utils/three';
 import styles from './DisplacementSphere.module.css';
+import TWEEN from "@tweenjs/tween.js";
 
 import * as THREE from 'three';
 const springConfig = {
@@ -47,7 +56,103 @@ export const DisplacementSphere = props => {
   const windowSize = useWindowSize();
   const rotationX = useSpring(0, springConfig);
   const rotationY = useSpring(0, springConfig);
+  const SatelliteLineShaderMaterial = new ShaderMaterial({
+    side: DoubleSide,
+    vertexShader: `
+        precision highp float;
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+          gl_Position = projectionMatrix * mvPosition;
+        }
+        `,
+    fragmentShader: `
 
+    void main() {
+      float length = 1.0 - (gl_FragCoord.z / gl_FragCoord.w) / 40.0;
+      if(length > 1.0) {
+        length = 1.0;
+      }else if(length < 0.3) {
+        length = 0.3;
+      }
+      gl_FragColor = vec4(vec3(24.0 / 255.0,154.0 / 255.0,211.0 / 255.0) * length, length);
+    }
+  `,
+    transparent: true,
+  });
+  const initSatelliteLine = () => {
+    const geometry = new TorusBufferGeometry(2.5, 0.002, 128, 128);
+    const torus = new Mesh(geometry, SatelliteLineShaderMaterial);
+  
+    const scale2 = 1.001;
+    const torus2 = torus.clone();
+    torus2.rotateX((Math.PI * 8) / 3);
+    torus2.scale.set(scale2, scale2, scale2);
+
+  
+    const g = new Group();
+    g.add(torus);
+    g.add(torus2);
+  
+    const tween= new TWEEN.Tween({ x: 1 })
+      .to(
+        {
+          x: 2,
+        },
+        40000
+      )
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        torus.rotation.y += 0.0006;
+        torus2.rotation.y += 0.0002;
+      })
+      .repeat(Infinity);
+    tween.start();
+  
+    return g;
+  };
+  const initPointsSys = () => {
+    const vertices = [];
+  
+    for (let i = 0; i < 1000; i++) {
+      const v = new Vector3(
+        MathUtils.randFloatSpread(1),
+        MathUtils.randFloatSpread(1),
+        MathUtils.randFloatSpread(1)
+      );
+      v.normalize().multiplyScalar(Math.random() + 2.3);
+      const x = v.x;
+      const y = v.y;
+      const z = v.z;
+  
+      vertices.push(x, y, z);
+    }
+  
+    const geometry = new BufferGeometry();
+    geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+  
+    const material = new PointsMaterial({
+      color: 0x189ad3,
+      size: 0.011,
+      transparent: true,
+    });
+  
+    const points = new Points(geometry, material);
+  
+    const tween = new TWEEN.Tween({ x: 1 })
+      .to(
+        {
+          x: 2,
+        },
+        40000
+      )
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        points.rotation.z += 0.5;
+      })
+      .repeat(Infinity);
+    tween.start();
+    sphere.current.add(points);
+  };
   useEffect(() => {
     const { innerWidth, innerHeight } = window;
     mouse.current = new Vector2(0, 0);
@@ -245,18 +350,26 @@ export const DisplacementSphere = props => {
       transparent: true,
     });
     
+     
     startTransition(() => {
+      const g = new Group();
       geometry.current = new SphereGeometry(1.95, 1000, 1000);
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.rotation.y = Math.PI * -0.155;
       sphere.current.add(landmassInPoints);
+      initPointsSys();
+      const lines = initSatelliteLine();
+      
+      g.add(lines);
+      
       const backgroundGeom = new SphereGeometry(5, 100, 100);
       const backgroundSp = new Mesh(backgroundGeom, background);
+      g.add(backgroundSp);
       const cloudGeom = new SphereGeometry(2.35,100,100);
       const clouds = new Mesh(cloudGeom, cloudShaderMaterial);
       clouds.rotation.y = Math.PI * -0.155;
-      // sphere.current.add(clouds);
-      sphere.current.add(backgroundSp);
+      g.add(clouds);
+      sphere.current.add(g);
       scene.current.add(sphere.current);
     });
 
