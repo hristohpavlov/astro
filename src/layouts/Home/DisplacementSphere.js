@@ -467,7 +467,7 @@ export const DisplacementSphere = props => {
       if (uniforms.current !== undefined) {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
-      points.current.rotation.y += 0.00036;
+      points.current.rotation.y += 0.0009;
       torus.current.rotation.y -= 0.00039;
       torus2.current.rotation.x += 0.00058;
       torus3.current.rotation.y += 0.00064;
