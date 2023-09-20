@@ -63,6 +63,7 @@ export const DisplacementSphere = props => {
   const torus = useRef();
   const torus2 = useRef();
   const torus3 = useRef();
+  const torus4 = useRef();
   const earthSil = useRef();
   const controls = useRef();
   const SatelliteLineShaderMaterial = new ShaderMaterial({
@@ -92,20 +93,27 @@ export const DisplacementSphere = props => {
     const geometry = new TorusGeometry(2.5, 0.002, 128, 128);
     torus.current = new Mesh(geometry, SatelliteLineShaderMaterial);
   
-    const scale2 = 1.001;
+    const scale2 = 1;
     torus2.current = torus.current.clone();
     torus2.current.rotateX((Math.PI * 8) / 3);
     torus2.current.scale.set(scale2, scale2, scale2);
 
-    const scale3 = 1.001;
+    const scale3 = 0.88;
     torus3.current = torus.current.clone();
     torus3.current.rotateX((Math.PI * 2) / 9);
     torus3.current.scale.set(scale3, scale3, scale3);
   
+    const scale4 = 0.88;
+    torus4.current = torus3.current.clone();
+    torus4.current.rotateX((Math.PI * 2) / 9);
+    torus4.current.scale.set(scale4, scale4, scale4);
+
     const g = new Group();
     g.add(torus.current);
     g.add(torus2.current);
     g.add(torus3.current);
+    g.add(torus4.current);
+
     const tween= new TWEEN.Tween({ x: 1 })
       .to(
         {
@@ -414,7 +422,7 @@ export const DisplacementSphere = props => {
       const g = new Group();
       geometry.current = new SphereGeometry(1.95, 1000, 1000);
       sphere.current = new Mesh(geometry.current, material.current);
-      sphere.current.rotation.y = Math.PI * -0.195;
+      sphere.current.rotation.y = Math.PI * -1.965;
       sphere.current.add(landmassInPoints);
       initPointsSys();
       lines.current = initSatelliteLine();
@@ -468,10 +476,11 @@ export const DisplacementSphere = props => {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
       if(controls.current.target.distanceTo( controls.current.object.position ) > 3.7){
-        points.current.rotation.y += 0.0009;
-        torus.current.rotation.y -= 0.00039;
+        points.current.rotation.y += 0.00095;
+        torus.current.rotation.y += 0.00079;
         torus2.current.rotation.x += 0.00058;
-        torus3.current.rotation.y += 0.00064;
+        torus3.current.rotation.y += 0.00174;
+        torus4.current.rotation.x += 0.00099;
         sphere.current.rotation.y -= 0.00066;
       }
       
