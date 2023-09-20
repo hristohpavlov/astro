@@ -432,7 +432,7 @@ export const DisplacementSphere = props => {
       const backgroundGeom = new SphereGeometry(535.5, 100, 100);
       backgroundSp.current = new Mesh(backgroundGeom, background);
       g.add(backgroundSp.current);
-      const cloudGeom = new SphereGeometry(2.40,100,100);
+      const cloudGeom = new SphereGeometry(2.17,100,100);
       clouds.current = new Mesh(cloudGeom, cloudShaderMaterial);
       clouds.current.rotation.y = Math.PI * -0.195;
       g.add(clouds.current);
@@ -477,10 +477,10 @@ export const DisplacementSphere = props => {
       }
       if(controls.current.target.distanceTo( controls.current.object.position ) > 3.7){
         points.current.rotation.y += 0.00095;
-        torus.current.rotation.y += 0.00079;
-        torus2.current.rotation.x += 0.00058;
-        torus3.current.rotation.y += 0.00174;
-        torus4.current.rotation.x += 0.00099;
+        torus.current.rotation.y += 0.00179;
+        torus2.current.rotation.x += 0.00101;
+        torus3.current.rotation.y += 0.00304;
+        torus4.current.rotation.x += 0.00299;
         sphere.current.rotation.y -= 0.00066;
       }
       
