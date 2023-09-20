@@ -184,10 +184,11 @@ export const DisplacementSphere = props => {
     
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
     controls.enableDamping = true;
+    controls.dampingFactor = 0.3;
     controls.enablePan = false;
     controls.minDistance = 3;
     controls.maxDistance = 7;
-    controls.rotateSpeed = 0.7;
+    controls.rotateSpeed = 0.35;
     controls.update();
 
     var geom = new THREE.SphereGeometry(1.95, 500, 500);
@@ -202,7 +203,7 @@ export const DisplacementSphere = props => {
     
     const loader = new THREE.TextureLoader();
     const texture = new TextureLoader().load("/static/earth_1.png");
-    const texture1 = new TextureLoader().load("/static/bg3.jpg");
+    const texture1 = new TextureLoader().load("/static/bg.jpg");
     
     texture1.wrapS = THREE.RepeatWrapping;
     texture1.wrapT = THREE.RepeatWrapping;
