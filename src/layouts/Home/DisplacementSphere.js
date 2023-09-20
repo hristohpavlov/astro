@@ -436,7 +436,7 @@ export const DisplacementSphere = props => {
       clouds.current = new Mesh(cloudGeom, cloudShaderMaterial);
       clouds.current.rotation.y = Math.PI * -0.195;
       g.add(clouds.current);
-      const earthGeom = new SphereGeometry(1.95,100,100);
+      const earthGeom = new SphereGeometry(1.92,100,100);
       earthSil.current = new Mesh(earthGeom, earthShaderMaterial);
       g.add(earthSil.current);
       sphere.current.add(g);

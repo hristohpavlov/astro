@@ -344,9 +344,9 @@
     transform: none;
   }
 
-  @media (--mediaNoTouch) {
+  /* @media (--mediaNoTouch) {
     display: none;
-  }
+  } */
 
   & svg {
     stroke: rgb(var(--rgbText) / 0.5);

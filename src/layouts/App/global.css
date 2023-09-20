@@ -25,7 +25,13 @@ body {
   &:focus {
     outline: none;
   }
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none; 
 }
+body::-webkit-scrollbar {
+  display: none;
+}
+
 body::-webkit-scrollbar-track
 {
     border-radius: 10px;

@@ -86,9 +86,9 @@ export const ProjectSummary = ({
         {description}
       </Text>
       <div className={styles.button} data-visible={visible}>
-        <Button iconHoverShift href={buttonLink} iconEnd="arrowRight">
+        {/* <Button iconHoverShift href={buttonLink} iconEnd="arrowRight">
           {buttonText}
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
@@ -99,7 +99,7 @@ export const ProjectSummary = ({
         <>
           {renderKatakana('laptop', visible, model)}
           <div className={styles.model} data-device="laptop">
-            <Model
+            {/* <Model
               alt={model.alt}
               cameraPosition={{ x: 0, y: 0, z: 8 }}
               showDelay={700}
@@ -113,7 +113,7 @@ export const ProjectSummary = ({
                   },
                 },
               ]}
-            />
+            /> */}
           </div>
         </>
       )}
@@ -121,7 +121,7 @@ export const ProjectSummary = ({
         <>
           {renderKatakana('computer', visible, model)}
           <div className={styles.model} data-device="computer">
-            <Model
+            {/* <Model
               alt={model.alt}
               cameraPosition={{ x: 0, y: 0.45, z: 2.9 }}
               showDelay={700}
@@ -135,7 +135,7 @@ export const ProjectSummary = ({
                   },
                 },
               ]}
-            />
+            /> */}
           </div>
         </>
       )}
@@ -143,7 +143,7 @@ export const ProjectSummary = ({
         <>
           {renderKatakana('phone', visible, model)}
           <div className={styles.model} data-device="phone">
-            <Model
+            {/* <Model
               alt={model.alt}
               cameraPosition={{ x: 0, y: 0, z: 11.5 }}
               showDelay={300}
@@ -166,7 +166,7 @@ export const ProjectSummary = ({
                   },
                 },
               ]}
-            />
+            /> */}
           </div>
         </>
       )}

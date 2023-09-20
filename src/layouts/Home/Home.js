@@ -30,7 +30,7 @@ export const Home = () => {
   const details = useRef();
 
   useEffect(() => {
-    const sections = [intro, projectOne, projectTwo, projectThree, details];
+    const sections = [intro, projectOne];
 
     const sectionObserver = new IntersectionObserver(
       (entries, observer) => {
@@ -53,9 +53,9 @@ export const Home = () => {
       { rootMargin: '-100% 0px 0px 0px' }
     );
 
-    // sections.forEach(section => {
-    //   sectionObserver.observe(section.current);
-    // });
+    sections.forEach(section => {
+      sectionObserver.observe(section.current);
+    });
 
     indicatorObserver.observe(intro.current);
 
@@ -77,7 +77,7 @@ export const Home = () => {
         disciplines={disciplines}
         scrollIndicatorHidden={scrollIndicatorHidden}
       />
-      {/* <ProjectSummary
+      <ProjectSummary
         id="project-1"
         sectionRef={projectOne}
         visible={visibleSections.includes(projectOne.current)}
@@ -96,7 +96,7 @@ export const Home = () => {
             },
           ],
         }}
-      /> */}
+      />
       {/* <ProjectSummary
         id="project-2"
         alternate
@@ -147,7 +147,7 @@ export const Home = () => {
         visible={visibleSections.includes(details.current)}
         id="details"
       /> */}
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
