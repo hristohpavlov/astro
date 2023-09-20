@@ -187,8 +187,8 @@ export const DisplacementSphere = props => {
     controls.current.enableDamping = true;
     controls.current.dampingFactor = 0.3;
     controls.current.enablePan = false;
-    controls.current.minDistance = 3;
-    if(innerWidth > 1000){controls.current.maxDistance = 5;}else {controls.current.maxDistance = 7;}
+    controls.current.minDistance = 3.51;
+    if(innerWidth > 1000){controls.current.maxDistance = 4.5;}else {controls.current.maxDistance = 7;}
     
     controls.current.rotateSpeed = 0.35;
     controls.current.update();
