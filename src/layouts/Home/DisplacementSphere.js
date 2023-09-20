@@ -64,6 +64,7 @@ export const DisplacementSphere = props => {
   const torus2 = useRef();
   const torus3 = useRef();
   const earthSil = useRef();
+  const controls = useRef();
   const SatelliteLineShaderMaterial = new ShaderMaterial({
     side: DoubleSide,
     vertexShader: `
@@ -182,15 +183,14 @@ export const DisplacementSphere = props => {
     camera.current.position.set(4,0,0);
     scene.current = new Scene();
     
-    const controls = new OrbitControls(camera.current, renderer.current.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.3;
-    controls.enablePan = false;
-    controls.minDistance = 3;
-    controls.maxDistance = 7;
-    controls.rotateSpeed = 0.35;
-    controls.update();
-
+    controls.current = new OrbitControls(camera.current, renderer.current.domElement);
+    controls.current.enableDamping = true;
+    controls.current.dampingFactor = 0.3;
+    controls.current.enablePan = false;
+    controls.current.minDistance = 3;
+    controls.current.maxDistance = 7;
+    controls.current.rotateSpeed = 0.35;
+    controls.current.update();
     var geom = new THREE.SphereGeometry(1.95, 500, 500);
     var colors = [];
     var color = new THREE.Color();
@@ -460,18 +460,20 @@ export const DisplacementSphere = props => {
 
   useEffect(() => {
     let animation;
-
     const animate = () => {
       animation = requestAnimationFrame(animate);
 
       if (uniforms.current !== undefined) {
         uniforms.current.time.value = 0.00005 * (Date.now() - start.current);
       }
-      points.current.rotation.y += 0.0009;
-      torus.current.rotation.y -= 0.00039;
-      torus2.current.rotation.x += 0.00058;
-      torus3.current.rotation.y += 0.00064;
-      sphere.current.rotation.y -= 0.00066;
+      if(controls.current.target.distanceTo( controls.current.object.position ) > 3.7){
+        points.current.rotation.y += 0.0009;
+        torus.current.rotation.y -= 0.00039;
+        torus2.current.rotation.x += 0.00058;
+        torus3.current.rotation.y += 0.00064;
+        sphere.current.rotation.y -= 0.00066;
+      }
+      
       sphere.current.rotation.z = rotationX.get();
       sphere.current.rotation.x = rotationY.get();
       renderer.current.render(scene.current, camera.current);
