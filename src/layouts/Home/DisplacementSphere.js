@@ -179,7 +179,7 @@ export const DisplacementSphere = props => {
     renderer.current.setSize(innerWidth, innerHeight);
     renderer.current.setPixelRatio(1);
     camera.current = new PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
-    camera.current.position.set(4,0,3);
+    camera.current.position.set(4,0,0);
     scene.current = new Scene();
     
     const controls = new OrbitControls(camera.current, renderer.current.domElement);
@@ -202,7 +202,7 @@ export const DisplacementSphere = props => {
     
     const loader = new THREE.TextureLoader();
     const texture = new TextureLoader().load("/static/earth_1.png");
-    const texture1 = new TextureLoader().load("/static/bg.jpg");
+    const texture1 = new TextureLoader().load("/static/bg3.jpg");
     
     texture1.wrapS = THREE.RepeatWrapping;
     texture1.wrapT = THREE.RepeatWrapping;
@@ -419,7 +419,7 @@ export const DisplacementSphere = props => {
       
       g.add(lines.current);
       
-      const backgroundGeom = new SphereGeometry(5.5, 100, 100);
+      const backgroundGeom = new SphereGeometry(535.5, 100, 100);
       backgroundSp.current = new Mesh(backgroundGeom, background);
       g.add(backgroundSp.current);
       const cloudGeom = new SphereGeometry(2.40,100,100);
