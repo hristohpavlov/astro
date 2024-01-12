@@ -15,6 +15,7 @@ import { Fragment, createContext, useEffect, useReducer } from 'react';
 import { msToNum } from 'utils/style';
 import { ScrollRestore } from '../layouts/App/ScrollRestore';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const AppContext = createContext({});
 
@@ -73,6 +74,7 @@ const App = ({ Component, pageProps }) => {
                 >
                   <ScrollRestore />
                   <Analytics />
+                  <SpeedInsights />
                   <Component {...pageProps} />
                 </m.div>
               </AnimatePresence>

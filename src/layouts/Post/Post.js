@@ -87,7 +87,7 @@ export const Post = ({ children, title, date, abstract, banner, timecode, ogImag
               ))}
             </Heading>
             <div className={styles.details}>
-              <RouterLink href="#postContent">
+              <RouterLink legacyBehavior href="#postContent">
                 <a
                   className={styles.arrow}
                   aria-label="Scroll to post content"

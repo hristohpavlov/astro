@@ -3,7 +3,6 @@ module.exports = {
     trailingSlash: true,
     pageExtensions: ['page.js', 'api.js'],
     experimental: {
-        newNextLinkBehavior: false,
       },
     webpack(config, { isServer }) {
       // Run custom scripts

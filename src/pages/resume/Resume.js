@@ -65,7 +65,7 @@ const ArticlesPost = ({
           />
         </div>
       )}
-      <RouterLink href={`/resume/${slug}`} scroll={false}>
+      <RouterLink legacyBehavior href={`/resume/${slug}`} scroll={false}>
         <a
           className={styles.postLink}
           onMouseEnter={handleMouseEnter}
