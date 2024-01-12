@@ -235,10 +235,10 @@ export const DisplacementSphere = props => {
           value: disk
         },
         size: {
-          value: 0.00125
+          value: 0.0015
         },
         scale: {
-          value: window.innerHeight * 5
+          value: window.innerHeight * 4
         }
       },
       vertexShader: `          
@@ -420,7 +420,7 @@ export const DisplacementSphere = props => {
      
     startTransition(() => {
       const g = new Group();
-      geometry.current = new SphereGeometry(1.95, 1000, 1000);
+      geometry.current = new SphereGeometry(1.95, 3900, 3900);
       sphere.current = new Mesh(geometry.current, material.current);
       sphere.current.rotation.y = Math.PI * -1.965;
       sphere.current.add(landmassInPoints);
